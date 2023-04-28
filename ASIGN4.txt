@@ -1,0 +1,394 @@
+Q1 . design of a data warehouse for IPL Cricket Tournament.
+
+a. Design Fact & Dimension tables:
+
+Fact Table: Matches
+match_id (Primary Key)
+match_date
+team1_id (Foreign Key to Teams dimension)
+team2_id (Foreign Key to Teams dimension)
+venue_id (Foreign Key to Venues dimension)
+toss_winner_id (Foreign Key to Teams dimension)
+toss_decision
+winner_id (Foreign Key to Teams dimension)
+win_by_runs
+win_by_wickets
+player_of_match_id (Foreign Key to Players dimension)
+Dimension Tables:
+a. Teams
+team_id (Primary Key)
+team_name
+team_city
+b. Players
+
+player_id (Primary Key)
+player_name
+country
+c. Venues
+
+venue_id (Primary Key)
+venue_name
+city
+b. Create meaningful Primary & Foreign keys:
+
+Primary keys are already defined in the Fact and Dimension tables.
+Foreign keys are also defined in the Fact table to reference the Dimension tables.
+c. Try to follow Star/SnowFlake Schema Design:
+
+The design follows the Star Schema where the Fact table is at the center and is surrounded by Dimension tables.
+d. Try to write few SQL queries to generate insightful business metrics:
+Here are a few sample SQL queries to generate insightful business metrics:
+
+Total number of matches played in each city:
+SELECT v.city, COUNT(*) AS num_matches
+FROM Matches m
+JOIN Venues v ON m.venue_id = v.venue_id
+GROUP BY v.city;
+
+Top 5 teams with the most wins:
+SELECT t.team_name, COUNT(*) AS num_wins
+FROM Matches m
+JOIN Teams t ON m.winner_id = t.team_id
+GROUP BY t.team_name
+ORDER BY num_wins DESC
+LIMIT 5;
+
+Number of matches won by each team in a particular year:
+SELECT t.team_name, COUNT(*) AS num_wins
+FROM Matches m
+JOIN Teams t ON m.winner_id = t.team_id
+WHERE YEAR(m.match_date) = 2022
+GROUP BY t.team_name;
+
+Average margin of victory by the team that won the toss:
+SELECT t.team_name, AVG(m.win_by_runs) AS avg_win_margin
+FROM Matches m
+JOIN Teams t ON m.toss_winner_id = t.team_id
+WHERE m.win_by_runs IS NOT NULL
+GROUP BY t.team_name;
+
+List of players who won the player of the match award more than once:
+SELECT p.player_name, COUNT(*) AS num_awards
+FROM Matches m
+JOIN Players p ON m.player_of_match_id = p.player_id
+GROUP BY p.player_name
+HAVING num_awards > 1;
+
+These are just a few examples, but there are many other insightful business metrics that can be generated from this data warehouse.
+
+
+Q2 . design of a data warehouse for a food delivery app like Swiggy or Zomato.
+
+a. Design Fact & Dimension tables:
+
+Fact Table: Orders
+order_id (Primary Key)
+order_date
+customer_id (Foreign Key to Customers dimension)
+restaurant_id (Foreign Key to Restaurants dimension)
+delivery_partner_id (Foreign Key to Delivery Partners dimension)
+order_status
+payment_mode
+total_amount
+delivery_address_id (Foreign Key to Addresses dimension)
+Dimension Tables:
+a. Customers
+customer_id (Primary Key)
+customer_name
+phone_number
+email
+gender
+age
+b. Restaurants
+
+restaurant_id (Primary Key)
+restaurant_name
+cuisine_type
+rating
+city
+c. Delivery Partners
+
+delivery_partner_id (Primary Key)
+partner_name
+phone_number
+vehicle_type
+d. Addresses
+
+address_id (Primary Key)
+customer_id (Foreign Key to Customers dimension)
+address_type
+street
+city
+state
+country
+pincode
+b. Create meaningful Primary & Foreign keys:
+
+Primary keys are already defined in the Fact and Dimension tables.
+Foreign keys are also defined in the Fact table to reference the Dimension tables.
+c. Try to follow Star/SnowFlake Schema Design:
+
+The design follows the Star Schema where the Fact table is at the center and is surrounded by Dimension tables.
+d. Try to write few SQL queries to generate insightful business metrics:
+Here are a few sample SQL queries to generate insightful business metrics:
+
+Total number of orders placed by each customer:
+SELECT c.customer_name, COUNT(*) AS num_orders
+FROM Orders o
+JOIN Customers c ON o.customer_id = c.customer_id
+GROUP BY c.customer_name;
+
+Top 5 restaurants with the most orders:
+SELECT r.restaurant_name, COUNT(*) AS num_orders
+FROM Orders o
+JOIN Restaurants r ON o.restaurant_id = r.restaurant_id
+GROUP BY r.restaurant_name
+ORDER BY num_orders DESC
+LIMIT 5;
+
+Number of orders delivered by each delivery partner:
+SELECT d.partner_name, COUNT(*) AS num_orders
+FROM Orders o
+JOIN Delivery_Partners d ON o.delivery_partner_id = d.delivery_partner_id
+GROUP BY d.partner_name;
+
+Average order value by payment mode:
+SELECT o.payment_mode, AVG(o.total_amount) AS avg_order_value
+FROM Orders o
+GROUP BY o.payment_mode;
+
+Number of orders placed from each city:
+SELECT a.city, COUNT(*) AS num_orders
+FROM Orders o
+JOIN Addresses a ON o.delivery_address_id = a.address_id
+GROUP BY a.city;
+
+These are just a few examples, but there are many other insightful business metrics that can be generated from this data warehouse.
+
+
+Q3. design of a data warehouse for a cab ride service like Uber or Lyft.
+
+a. Design Fact & Dimension tables:
+
+Fact Table: Rides
+ride_id (Primary Key)
+ride_date
+rider_id (Foreign Key to Riders dimension)
+driver_id (Foreign Key to Drivers dimension)
+pickup_location_id (Foreign Key to Locations dimension)
+dropoff_location_id (Foreign Key to Locations dimension)
+ride_status
+ride_type
+fare
+distance
+duration
+Dimension Tables:
+a. Riders
+rider_id (Primary Key)
+rider_name
+phone_number
+email
+gender
+age
+b. Drivers
+
+driver_id (Primary Key)
+driver_name
+phone_number
+email
+gender
+age
+vehicle_type
+c. Locations
+
+location_id (Primary Key)
+address
+city
+state
+country
+pincode
+b. Create meaningful Primary & Foreign keys:
+
+Primary keys are already defined in the Fact and Dimension tables.
+Foreign keys are also defined in the Fact table to reference the Dimension tables.
+c. Try to follow Star/SnowFlake Schema Design:
+
+The design follows the Star Schema where the Fact table is at the center and is surrounded by Dimension tables.
+d. Try to write few SQL queries to generate insightful business metrics:
+Here are a few sample SQL queries to generate insightful business metrics:
+
+Total number of rides by each rider:
+SELECT r.rider_name, COUNT(*) AS num_rides
+FROM Rides ri
+JOIN Riders r ON ri.rider_id = r.rider_id
+GROUP BY r.rider_name;
+
+Top 5 drivers with the most rides:
+SELECT d.driver_name, COUNT(*) AS num_rides
+FROM Rides ri
+JOIN Drivers d ON ri.driver_id = d.driver_id
+GROUP BY d.driver_name
+ORDER BY num_rides DESC
+LIMIT 5;
+
+Average fare and distance for each ride type:
+SELECT ri.ride_type, AVG(ri.fare) AS avg_fare, AVG(ri.distance) AS avg_distance
+FROM Rides ri
+GROUP BY ri.ride_type;
+
+Number of rides completed by each driver in a specific city:
+SELECT d.driver_name, COUNT(*) AS num_rides
+FROM Rides ri
+JOIN Drivers d ON ri.driver_id = d.driver_id
+JOIN Locations l ON ri.dropoff_location_id = l.location_id
+WHERE l.city = 'New York'
+GROUP BY d.driver_name;
+
+Total revenue by each rider for a specific time period:
+SELECT r.rider_name, SUM(ri.fare) AS total_revenue
+FROM Rides ri
+JOIN Riders r ON ri.rider_id = r.rider_id
+WHERE ri.ride_date BETWEEN '2022-01-01' AND '2022-03-31'
+GROUP BY r.rider_name;
+
+These are just a few examples, but there are many other insightful business metrics that can be generated from this data warehouse.
+
+
+Q4 .design of a data warehouse for a restaurant table booking app like Dineout.
+
+a. Design Fact & Dimension tables:
+
+Fact Table: Bookings
+booking_id (Primary Key)
+booking_date
+restaurant_id (Foreign Key to Restaurants dimension)
+diner_id (Foreign Key to Diners dimension)
+table_id (Foreign Key to Tables dimension)
+booking_status
+booking_source
+booking_type
+booking_amount
+Dimension Tables:
+a. Restaurants
+restaurant_id (Primary Key)
+restaurant_name
+phone_number
+email
+address
+city
+state
+country
+pincode
+b. Diners
+
+diner_id (Primary Key)
+diner_name
+phone_number
+email
+gender
+age
+dining_preference
+c. Tables
+
+table_id (Primary Key)
+table_name
+restaurant_id (Foreign Key to Restaurants dimension)
+table_type
+table_capacity
+b. Create meaningful Primary & Foreign keys:
+
+Primary keys are already defined in the Fact and Dimension tables.
+Foreign keys are also defined in the Fact table to reference the Dimension tables.
+c. Try to follow Star/SnowFlake Schema Design:
+
+The design follows the Star Schema where the Fact table is at the center and is surrounded by Dimension tables.
+d. Try to write few SQL queries to generate insightful business metrics:
+Here are a few sample SQL queries to generate insightful business metrics:
+
+Number of bookings made by each diner:
+SELECT d.diner_name, COUNT(*) AS num_bookings
+FROM Bookings b
+JOIN Diners d ON b.diner_id = d.diner_id
+GROUP BY d.diner_name;
+
+Top 5 restaurants with the most bookings:
+SELECT r.restaurant_name, COUNT(*) AS num_bookings
+FROM Bookings b
+JOIN Restaurants r ON b.restaurant_id = r.restaurant_id
+GROUP BY r.restaurant_name
+ORDER BY num_bookings DESC
+LIMIT 5;
+
+Average booking amount by booking source:
+SELECT b.booking_source, AVG(b.booking_amount) AS avg_amount
+FROM Bookings b
+GROUP BY b.booking_source;
+
+Number of bookings made by each diner in a specific city:
+SELECT d.diner_name, COUNT(*) AS num_bookings
+FROM Bookings b
+JOIN Diners d ON b.diner_id = d.diner_id
+JOIN Restaurants r ON b.restaurant_id = r.restaurant_id
+WHERE r.city = 'Mumbai'
+GROUP BY d.diner_name;
+
+Total revenue generated by a specific restaurant in a specific time period:
+SELECT r.restaurant_name, SUM(b.booking_amount) AS total_revenue
+FROM Bookings b
+JOIN Restaurants r ON b.restaurant_id = r.restaurant_id
+WHERE b.booking_date BETWEEN '2022-01-01' AND '2022-03-31'
+AND r.restaurant_name = 'ABC Restaurant'
+GROUP BY r.restaurant_name;
+
+These are just a few examples, but there are many other insightful business metrics that can be generated from this data warehouse.
+
+
+Q5. design for a Data Warehouse for Covid Vaccination Application:
+
+a. Design Fact & Dimension tables:
+
+Fact Table:
+
+Vaccination Records (with columns such as patient_id, date_of_vaccination, vaccine_type, dose_number, etc.)
+Dimension Tables:
+
+Patients (with columns such as patient_id, name, age, gender, etc.)
+Vaccines (with columns such as vaccine_id, vaccine_name, manufacturer, etc.)
+Locations (with columns such as location_id, location_name, address, etc.)
+b. Create meaningful Primary & Foreign keys:
+
+Patient ID, Vaccine ID, and Location ID can serve as primary keys in their respective tables.
+Patient ID, Vaccine ID, and Location ID can also serve as foreign keys in the Vaccination Records Fact table.
+c. Try to follow Star/SnowFlake Schema Design:
+
+The design follows the Star Schema with one fact table and three dimension tables.
+d. Try to write few SQL queries to generate insightful business metrics:
+
+Total vaccinations given on a particular day
+sql
+Copy code
+SELECT COUNT()
+FROM Vaccination_Records
+WHERE date_of_vaccination = '2023-04-28';
+Percentage of population vaccinated with both doses
+sql
+Copy code
+SELECT (COUNT(DISTINCT patient_id) FILTER (WHERE dose_number = 2) / COUNT(DISTINCT patient_id)) * 100
+FROM Vaccination_Records;
+Top 5 vaccines administered
+vbnet
+Copy code
+SELECT vaccine_name, COUNT() as num_vaccinations
+FROM Vaccination_Records
+JOIN Vaccines ON Vaccination_Records.vaccine_id = Vaccines.vaccine_id
+GROUP BY vaccine_name
+ORDER BY num_vaccinations DESC
+LIMIT 5;
+Number of vaccinations given per location
+vbnet
+Copy code
+SELECT location_name, COUNT(*) as num_vaccinations
+FROM Vaccination_Records
+JOIN Locations ON Vaccination_Records.location_id = Locations.location_id
+GROUP BY location_name
+ORDER BY num_vaccinations DESC;
